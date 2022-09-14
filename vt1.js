@@ -16,10 +16,11 @@
 */
 function jarjestaLeimaustavat(data) {
   let leimaustavat = Array.from(data.leimaustavat);
-  leimaustavat.sort();
+  leimaustavat = leimaustavat.sort();
   console.log(data);
   return leimaustavat; // tässä pitää palauttaa järjestetty kopio eikä alkuperäistä
 }
+
 
 /**
   * Taso 1
@@ -31,9 +32,25 @@ function jarjestaLeimaustavat(data) {
   */
 function jarjestaSarjat(data) {
   let sarjat = Array.from(data.sarjat);
-  sarjat.sort((a, b) => a.nimi - b.nimi);
-  console.dir(sarjat);
+  sarjat = sarjat.sort(vertaaSarjanNimea);
   return sarjat;  // tässä pitää palauttaa järjestetty kopio eikä alkuperäistä
+}
+
+
+/**
+ * Ottaa parametrikseen kaksi objektia taulukosta Sarja ja vertaa niitä keskenään.
+ * @param {Object} a 
+ * @param {Object} b 
+ * @returns {Number} palauttaa -1 jos a tulee taulukkoon ensin, 1 jos b ja 0 jos sama nimi
+ */
+function vertaaSarjanNimea(a, b) {
+  if (a.nimi < b.nimi) {
+    return -1;
+  }
+  if (b.nimi < a.nimi) {
+    return 1;
+  }
+  return 0;
 }
 
 
