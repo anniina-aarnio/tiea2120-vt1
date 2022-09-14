@@ -15,8 +15,10 @@
   * @return {Array} palauttaa järjestetyn _kopion_ data.leimaustavat-taulukosta
 */
 function jarjestaLeimaustavat(data) {
+  let leimaustavat = Array.from(data.leimaustavat);
+  leimaustavat.sort();
   console.log(data);
-  return data.leimaustavat; // tässä pitää palauttaa järjestetty kopio eikä alkuperäistä
+  return leimaustavat; // tässä pitää palauttaa järjestetty kopio eikä alkuperäistä
 }
 
 /**
@@ -28,7 +30,10 @@ function jarjestaLeimaustavat(data) {
   * @return {Array} palauttaa järjestetyn _kopion_ data.sarjat-taulukosta
   */
 function jarjestaSarjat(data) {
-  return data.sarjat;  // tässä pitää palauttaa järjestetty kopio eikä alkuperäistä
+  let sarjat = Array.from(data.sarjat);
+  sarjat.sort((a, b) => a.nimi - b.nimi);
+  console.dir(sarjat);
+  return sarjat;  // tässä pitää palauttaa järjestetty kopio eikä alkuperäistä
 }
 
 
