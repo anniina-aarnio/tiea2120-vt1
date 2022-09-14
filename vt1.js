@@ -128,8 +128,8 @@ function lisaaSarja(data, nimi, kesto, alkuaika, loppuaika) {
  */
 function uusiSarjaId(data) {
   let suurin = 0;
-  for (let sarja in data.sarjat) {
-    let id = parseInt(sarja.id);
+  for (let sarja of data.sarjat) {
+    let id = sarja.id;
     if (id > suurin) { // pitäisikö olla tarkistus, onko nro vai ei?
       suurin = id;
     }
@@ -140,14 +140,24 @@ function uusiSarjaId(data) {
 
 /**
  * Etsii, onko annettu nimi jo käytössä.
+ * Poistaa samalla nimen alusta ja lopusta tyhjät merkit.
  * @param {Object} data 
  * @param {String} nimi 
  * @return {Boolean} palauttaa true jos on uniikki, false jos on jo käytössä
  */
 function onkoSarjanNimiSopiva(data, nimi) {
-  // onko uniikki?
+  // onko tyhjä?
+  nimi = nimi.trim();
+  if (nimi.length < 1) {
+    return false;
+  }
 
-  // onko pelkkää whitespacea?
+  // onko uniikki?
+  for (let sarja of data.sarjat) {
+    if (sarja.nimi === nimi) {
+      return false;
+    }
+  }
   return true;
 }
 
