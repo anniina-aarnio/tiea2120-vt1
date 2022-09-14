@@ -79,7 +79,85 @@ function vertaaSarjanNimea(a, b) {
   * @return {Object} palauttaa muutetun alkuperäisen data-tietorakenteen
   */
 function lisaaSarja(data, nimi, kesto, alkuaika, loppuaika) {
+
+  // luodaan uusi uniikki id-numero
+  let id = uusiSarjaId(data);
+
+  // luodaan nimi, tarkistetaan että uniikki
+  let kaikkiKunnossa = onkoSarjanNimiSopiva(data, nimi);
+
+  // luodaan kesto tunteina, muunnetaan numeroksi ennen tallennusta
+  if (kaikkiKunnossa) {
+    kaikkiKunnossa = muuntuukoNumeroksi(kesto);
+  }
+  if (kaikkiKunnossa) {
+    kaikkiKunnossa = (parseInt(kesto) >= 0);
+  }
+
+  // alku- ja loppuaika String-muodossa, oletus ""
+  // nyt ei tarkistusta että tulee oikeanlaista sisältöä...
+  let alku = alkuaika.trim();
+  let loppu = loppuaika.trim();
+  
+
+  // luodaan tyhjä joukkuelista
+  let joukkueet = [];
+
+  // luodaan uusi objekti lisättäväksi
+  if (kaikkiKunnossa) {
+    let uusiSarja = {
+      "id": id,
+      "nimi": nimi,
+      "kesto": parseInt(kesto),
+      "alkuaika": alku,
+      "loppuaika": loppu,
+      "joukkueet": joukkueet
+    };
+    let sarjat = data.sarjat;
+    sarjat.push(uusiSarja);
+  }
+
   return data;
+}
+
+
+/**
+ * Etsii isoimman numeron datan
+ * @param {Object} data
+ * @return {Number} palauttaa olemassaolevista id-numeroista yhtä isomman id:n
+ */
+function uusiSarjaId(data) {
+  let suurin = 0;
+  for (let sarja in data.sarjat) {
+    let id = parseInt(sarja.id);
+    if (id > suurin) { // pitäisikö olla tarkistus, onko nro vai ei?
+      suurin = id;
+    }
+  }
+  suurin += 1;
+  return suurin;
+}
+
+/**
+ * Etsii, onko annettu nimi jo käytössä.
+ * @param {Object} data 
+ * @param {String} nimi 
+ * @return {Boolean} palauttaa true jos on uniikki, false jos on jo käytössä
+ */
+function onkoSarjanNimiSopiva(data, nimi) {
+  // onko uniikki?
+
+  // onko pelkkää whitespacea?
+  return true;
+}
+
+/**
+ * Tarkistaa, voiko annetun merkkijonon muuntaa numeroksi.
+ * @param {String} testattava 
+ * @returns {Boolean} jos voi muuntaa kokonaisluvuksi, false jos ei
+ */
+function muuntuukoNumeroksi(testattava) {
+  return /^-{0,1}\d+$/.test(testattava);
 }
 
 /**
