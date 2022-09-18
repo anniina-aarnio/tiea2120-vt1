@@ -1,1 +1,10 @@
-testi
+/*div {
+    border: 1px solid black;
+}*/
+
+table {
+    table-layout: fixed;
+    width: 60%;
+    border-collapse: collapse;
+    border: 1px dotted black;
+}
