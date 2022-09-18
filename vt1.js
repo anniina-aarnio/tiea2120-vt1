@@ -115,6 +115,7 @@ function lisaaSarja(data, nimi, kesto, alkuaika, loppuaika) {
     };
     let sarjat = data.sarjat;
     sarjat.push(uusiSarja);
+    jarjestaSarjat(data);
   }
 
   return data;
@@ -178,6 +179,13 @@ function muuntuukoNumeroksi(testattava) {
   * @return {Object} palauttaa muuttuneen alkuperäisen datan
   */
 function poistaJoukkue(data, id) {
+  for (let i = 0; i < data.joukkueet.length; i++) {
+    if (data.joukkueet[i].id === id) {
+      console.log("föffölömöö");
+      data.joukkueet.splice(i, 1);
+      return data;
+    }
+  }
   return data;
 }
 
