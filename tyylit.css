@@ -1,10 +1,42 @@
-/*div {
+div#vt1 > div > div > div {
+    float: left;
+    margin: 0.5em;
+    padding: 1em;
     border: 1px solid black;
-}*/
+}
+
+div#vt1 > div > div > :nth-child(2) {
+    width: 17em;
+}
+
+div#vt1 > div > div > :nth-child(2) label {
+    display: block;
+} 
 
 table {
-    table-layout: fixed;
-    width: 60%;
     border-collapse: collapse;
     border: 1px dotted black;
+}
+
+tr th {
+    border: 1px dotted black;
+    vertical-align: top;
+    padding: 0;
+}
+
+td {
+    border: 1px dotted black;
+    vertical-align: top;
+    padding: 0;
+}
+
+ul {
+    margin: 0;
+    padding: 0;
+    padding-left: 1em;
+}
+
+ul li {
+    margin: 0;
+    padding: 0;
 }
