@@ -81,7 +81,7 @@ function vertaaSarjanNimea(a, b) {
 function lisaaSarja(data, nimi, kesto, alkuaika, loppuaika) {
 
   // luodaan uusi uniikki id-numero
-  let id = uusiSarjaId(data);
+  let id = uusiId(data.sarjat);
 
   // luodaan nimi, tarkistetaan että uniikki
   let kaikkiKunnossa = onkoSarjanNimiSopiva(data, nimi);
@@ -290,7 +290,67 @@ function alkaakoNumerolla(testattava) {
   * @return {Object} palauttaa muutetun alkuperäisen data-tietorakenteen
   */
 function lisaaJoukkue(data, nimi, leimaustavat, sarja, jasenet) {
+  let kaikkiKunnossa = true;
+
+
+  if (kaikkiKunnossa) {
+    let uusi = {
+      "id": 10, // muuta tämä!!!!
+      "nimi": nimi,
+      "jasenet": jasenet,
+      "leimaustapa": leimaustavat,
+      "rastileimaukset": [],
+      "sarja": {Object},
+      "pisteet": 0,
+      "matka": 0,
+      "aika": "00:00:00"
+    };
+    data.joukkueet.push(uusi);
+  }
+
   return data;
+}
+
+/**
+ * Tarkistaa, onko nimi sopiva:
+ * nimi on uniikki, nimi ei ole tyhjä (pelkkää whitespacea)
+ * @param {Object} data 
+ * @param {String} nimi 
+ * @returns {Boolean} true, jos uniikki sopiva nimi, false jos tyhjä tai nimi on jo
+ */
+function onkoJoukkueenNimiSopiva(data, nimi) {
+    // onko tyhjä?
+    nimi = nimi.trim().toLowerCase();
+    if (nimi.length < 1) {
+      return false;
+    }
+  
+    // onko uniikki?
+    for (let joukkue of data.joukkueet) {
+      if (joukkue.nimi.toLowerCase() === nimi) {
+        return false;
+      }
+    }
+    return true;
+}
+
+/**
+ * Tarkistaa taulukon alkioista sen hetken suurimman id:n,
+ * ottaa sen talteen ja suurentaa yhdellä.
+ * Palauttaa keksityn luvun.
+ * @param {Array} taulukko jonka alkioilla on "id"
+ * @returns {Number} uusi id
+ */
+function uusiId(taulukko) {
+  let suurin = 0;
+  for (let alkio of taulukko) {
+    let id = alkio.id;
+    if (id > suurin) { // pitäisikö olla tarkistus, onko nro vai ei?
+      suurin = id;
+    }
+  }
+  suurin += 1;
+  return suurin;
 }
 
 /**
