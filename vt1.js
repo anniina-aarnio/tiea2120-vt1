@@ -199,7 +199,61 @@ function poistaJoukkue(data, id) {
   * @return {Array} palauttaa järjestetyn _kopion_ data.rastit-taulukosta
   */
 function jarjestaRastit(data) {
-  return data.rastit; // tässä pitää palauttaa järjestetty kopio
+  let rastit = Array.from(data.rastit);
+  
+  rastit = rastit.sort(vertaaRastienKoodeja);
+
+  return rastit; // tässä pitää palauttaa järjestetty kopio
+}
+
+/**
+ * Ottaa parametrikseen kaksi objektia taulukosta Rastit ja vertaa niitä keskenään.
+ * Numeroilla alkavat rastit ovat kirjaimilla alkavien jälkeen.
+ * Isoilla ja pienillä kirjaimilla ei ole järjestämisessä merkitystä.
+ * @param {Object} a 
+ * @param {Object} b 
+ * @returns {Number} palauttaa -1 jos a tulee taulukkoon ensin, 1 jos b ja 0 jos sama nimi
+ */
+function vertaaRastienKoodeja(a, b) {
+  
+  // alkaako a numerolla
+  if (alkaakoNumerolla(a.koodi)) {
+    // alkaako myös b numerolla
+    if (alkaakoNumerolla(b.koodi)) {
+      if (a.koodi < b.koodi) {
+        return -1;
+      }
+      if (b.koodi < a.koodi) {
+        return 1;
+      }
+      return 0;
+    }
+    // a alkoi, b ei, joten b tulee ensin
+    return 1;
+  }
+
+  // alkaako vain b numerolla
+  if (alkaakoNumerolla(b.koodi)) {
+    return -1;
+  }
+
+  if (a.koodi < b.koodi) {
+    return -1;
+  }
+  if (b.koodi < a.koodi) {
+    return 1;
+  }
+  return 0;
+}
+
+
+/**
+ * Ottaa parametrikseen yhden String:n ja tarkistaa, alkaako numerolla.
+ * @param {String} testattava
+ * @returns {Boolean} true jos String alkaa numerolla, false jos ei
+ */
+function alkaakoNumerolla(testattava) {
+  return /^\d/.test(testattava);
 }
 
 
