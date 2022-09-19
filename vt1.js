@@ -148,14 +148,14 @@ function uusiSarjaId(data) {
  */
 function onkoSarjanNimiSopiva(data, nimi) {
   // onko tyhjä?
-  nimi = nimi.trim();
+  nimi = nimi.trim().toLowerCase();
   if (nimi.length < 1) {
     return false;
   }
 
   // onko uniikki?
   for (let sarja of data.sarjat) {
-    if (sarja.nimi === nimi) {
+    if (sarja.nimi.toLowerCase() === nimi) {
       return false;
     }
   }
