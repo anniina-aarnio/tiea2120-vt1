@@ -306,6 +306,36 @@ function onkoNimiSopiva(taulukko, nimi) {
 }
 
 /**
+ * Tarkistaa että leimaustapa-taulukossa on vähintään yksi leimaustapa.
+ * Leimaustavat löytyvät data.leimaustavat-taulukosta.
+ * @param {Object} data 
+ * @param {Array} taulukko 
+ * @returns 
+ */
+function onkoLeimaustavatSopivat(data, taulukko) {
+  // tyhjä taulukko ei käy
+  if (taulukko.length === 0) {
+    return false;
+  }
+
+  // tarkistaa, onko kaikki taulukon leimaustavat datan leimaustavoissa
+  for (let tapa of taulukko) {
+    let loytyiko = false;
+    for (let leimaustapa of data.leimaustavat) {
+      if (tapa === leimaustapa) {
+        loytyiko = true;
+        break; // tarkista toimiiko näin!!!
+      }
+    }
+    if (!loytyiko) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+/**
  * Tarkistaa taulukon alkioista sen hetken suurimman id:n,
  * ottaa sen talteen ja suurentaa yhdellä.
  * Palauttaa keksityn luvun.
