@@ -84,7 +84,7 @@ function lisaaSarja(data, nimi, kesto, alkuaika, loppuaika) {
   let id = uusiId(data.sarjat);
 
   // luodaan nimi, tarkistetaan että uniikki
-  let kaikkiKunnossa = onkoSarjanNimiSopiva(data, nimi);
+  let kaikkiKunnossa = onkoNimiSopiva(data.sarjat, nimi);
 
   // luodaan kesto tunteina, muunnetaan numeroksi ennen tallennusta
   if (kaikkiKunnossa) {
@@ -121,46 +121,6 @@ function lisaaSarja(data, nimi, kesto, alkuaika, loppuaika) {
   return data;
 }
 
-
-/**
- * Etsii isoimman numeron datan
- * @param {Object} data
- * @return {Number} palauttaa olemassaolevista id-numeroista yhtä isomman id:n
- */
-function uusiSarjaId(data) {
-  let suurin = 0;
-  for (let sarja of data.sarjat) {
-    let id = sarja.id;
-    if (id > suurin) { // pitäisikö olla tarkistus, onko nro vai ei?
-      suurin = id;
-    }
-  }
-  suurin += 1;
-  return suurin;
-}
-
-/**
- * Etsii, onko annettu nimi jo käytössä.
- * Poistaa samalla nimen alusta ja lopusta tyhjät merkit.
- * @param {Object} data 
- * @param {String} nimi 
- * @return {Boolean} palauttaa true jos on uniikki, false jos on jo käytössä
- */
-function onkoSarjanNimiSopiva(data, nimi) {
-  // onko tyhjä?
-  nimi = nimi.trim().toLowerCase();
-  if (nimi.length < 1) {
-    return false;
-  }
-
-  // onko uniikki?
-  for (let sarja of data.sarjat) {
-    if (sarja.nimi.toLowerCase() === nimi) {
-      return false;
-    }
-  }
-  return true;
-}
 
 /**
  * Tarkistaa, voiko annetun merkkijonon muuntaa numeroksi.
@@ -292,15 +252,25 @@ function alkaakoNumerolla(testattava) {
 function lisaaJoukkue(data, nimi, leimaustavat, sarja, jasenet) {
   let kaikkiKunnossa = true;
 
+  // luodaan uniikki id
+  let id = uusiId(data.joukkueet);
+
+  // tarkistetaan, että nimi on sopiva
+  kaikkiKunnossa = onkoNimiSopiva(data, nimi);
+
+  // tarkistetaan, että leimaustavat ovat sopivat
+  if (kaikkiKunnossa) {
+    kaikkiKunnossa = onkoLeimaustavatSopivat(data, leimaustavat);
+  }
 
   if (kaikkiKunnossa) {
     let uusi = {
-      "id": 10, // muuta tämä!!!!
+      "id": id,
       "nimi": nimi,
       "jasenet": jasenet,
       "leimaustapa": leimaustavat,
       "rastileimaukset": [],
-      "sarja": {Object},
+      "sarja": sarja,
       "pisteet": 0,
       "matka": 0,
       "aika": "00:00:00"
@@ -313,12 +283,13 @@ function lisaaJoukkue(data, nimi, leimaustavat, sarja, jasenet) {
 
 /**
  * Tarkistaa, onko nimi sopiva:
- * nimi on uniikki, nimi ei ole tyhjä (pelkkää whitespacea)
- * @param {Object} data 
+ * nimi on uniikki huomioimatta isoja ja pieniä kirjaimia ("kissa" ja "Kissa" eivät molemmat käy)
+ * nimi ei ole tyhjä (pelkkää whitespacea)
+ * @param {Array} taulukko jossa alkioita, joilla kenttä nimi
  * @param {String} nimi 
  * @returns {Boolean} true, jos uniikki sopiva nimi, false jos tyhjä tai nimi on jo
  */
-function onkoJoukkueenNimiSopiva(data, nimi) {
+function onkoNimiSopiva(taulukko, nimi) {
     // onko tyhjä?
     nimi = nimi.trim().toLowerCase();
     if (nimi.length < 1) {
@@ -326,8 +297,8 @@ function onkoJoukkueenNimiSopiva(data, nimi) {
     }
   
     // onko uniikki?
-    for (let joukkue of data.joukkueet) {
-      if (joukkue.nimi.toLowerCase() === nimi) {
+    for (let alkio of taulukko) {
+      if (alkio.nimi.toLowerCase() === nimi) {
         return false;
       }
     }
