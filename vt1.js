@@ -256,11 +256,19 @@ function lisaaJoukkue(data, nimi, leimaustavat, sarja, jasenet) {
   let id = uusiId(data.joukkueet);
 
   // tarkistetaan, että nimi on sopiva
-  kaikkiKunnossa = onkoNimiSopiva(data, nimi);
+  kaikkiKunnossa = onkoNimiSopiva(data.joukkueet, nimi);
 
   // tarkistetaan, että leimaustavat ovat sopivat
   if (kaikkiKunnossa) {
-    kaikkiKunnossa = onkoLeimaustavatSopivat(data, leimaustavat);
+    kaikkiKunnossa = onkoLeimaustavatSopivat(data.leimaustavat, leimaustavat);
+  }
+
+  if (kaikkiKunnossa) {
+    kaikkiKunnossa = onkoJasenetSopivat(jasenet);
+  }
+
+  if (kaikkiKunnossa) {
+    kaikkiKunnossa = loytyykoId(data.sarjat, sarja);
   }
 
   if (kaikkiKunnossa) {
@@ -290,7 +298,7 @@ function lisaaJoukkue(data, nimi, leimaustavat, sarja, jasenet) {
  * @returns {Boolean} true, jos uniikki sopiva nimi, false jos tyhjä tai nimi on jo
  */
 function onkoNimiSopiva(taulukko, nimi) {
-    // onko tyhjä?
+    // onko tyhjä nimi?
     nimi = nimi.trim().toLowerCase();
     if (nimi.length < 1) {
       return false;
@@ -306,13 +314,65 @@ function onkoNimiSopiva(taulukko, nimi) {
 }
 
 /**
+ * Tarkistaa jäsenlistan:
+ * - vähintään 2 jäsentä
+ * - jäsenet ovat erinimisiä
+ * - jäsenen nimen täytyy olla sopiva
+ * @param {Array} jasenet 
+ * @returns {Boolean} true, jos jäseniä 2 tai enemmän eikä samannimisiä
+ */
+function onkoJasenetSopivat(jasenet) {
+
+  // poistetaan tyhjällä nimellä olevat jäsenet
+  poistaTyhjat(jasenet);
+
+  // onko vähintään 2 jäsentä
+  if (jasenet.length < 2) {
+    return false;
+  }
+
+  // onko sopivia nimiä eli uniikkeja ja ei-tyhjiä
+  for (let i = 0; i < (jasenet.length-1); i++) {
+    if (jasenet[i].trim().length == 0) {
+      return false;
+    }
+    for (let j = i; j < jasenet.length; j++) {
+      if (jasenet[i] == jasenet[j]) { // nyt "Kissa" ja "kissa" on eri nimet
+        return false;
+      }
+    }
+  }
+
+  return true;
+}
+
+/**
+ * Poistaa taulukosta tyhjät arvot
+ * @param {Array} taulukko jossa String:ejä
+ */
+function poistaTyhjat(taulukko) {
+  // etsitään tyhjien indeksit
+  let poistettavat = [];
+  for (let i = 0; i < taulukko.length; i++) {
+    if (taulukko[i].trim().length == 0) {
+      poistettavat.push(i);
+    }
+  }
+
+  // poistetaan indeksit
+  for (let poistettava of poistettavat) {
+    taulukko.splice(poistettava, poistettava);
+  }
+}
+
+/**
  * Tarkistaa että leimaustapa-taulukossa on vähintään yksi leimaustapa.
  * Leimaustavat löytyvät data.leimaustavat-taulukosta.
- * @param {Object} data 
- * @param {Array} taulukko 
+ * @param {Array} leimaustavat jossa täytyy alemman taulukon alkiot löytyä
+ * @param {Array} taulukko jonka alkiot täytyy löytyä leimaustavoista
  * @returns 
  */
-function onkoLeimaustavatSopivat(data, taulukko) {
+function onkoLeimaustavatSopivat(leimaustavat, taulukko) {
   // tyhjä taulukko ei käy
   if (taulukko.length === 0) {
     return false;
@@ -321,7 +381,7 @@ function onkoLeimaustavatSopivat(data, taulukko) {
   // tarkistaa, onko kaikki taulukon leimaustavat datan leimaustavoissa
   for (let tapa of taulukko) {
     let loytyiko = false;
-    for (let leimaustapa of data.leimaustavat) {
+    for (let leimaustapa of leimaustavat) {
       if (tapa === leimaustapa) {
         loytyiko = true;
         break; // tarkista toimiiko näin!!!
@@ -333,6 +393,22 @@ function onkoLeimaustavatSopivat(data, taulukko) {
   }
 
   return true;
+}
+
+/**
+ * Tutkii, löytyykö id annetusta taulukosta
+ * alkio.id voi olla numero tai string
+ * @param {Array} taulukko jonka alkioilla on tunniste "id"
+ * @param {String} id
+ * @return {Boolean} true, jos id löytyy taulukosta
+ */
+function loytyykoId(taulukko, id) {
+  for (let alkio of taulukko) {
+    if (alkio.id == id) {
+      return true;
+    }
+  }
+  return false;
 }
 
 /**
