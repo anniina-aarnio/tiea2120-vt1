@@ -258,15 +258,18 @@ function lisaaJoukkue(data, nimi, leimaustavat, sarja, jasenet) {
   // tarkistetaan, että nimi on sopiva
   kaikkiKunnossa = onkoNimiSopiva(data.joukkueet, nimi);
 
-  // tarkistetaan, että leimaustavat ovat sopivat
+  // tarkistetaan, että leimaustavat ovat sopivat ja tallennetaan niiden indeksit taulukkoon
+  let leimaustapojenIndeksit = [];
   if (kaikkiKunnossa) {
-    kaikkiKunnossa = onkoLeimaustavatSopivat(data.leimaustavat, leimaustavat);
+    kaikkiKunnossa = onkoLeimaustavatSopivat(data.leimaustavat, leimaustavat, leimaustapojenIndeksit);
   }
 
+  // tarkistetaan onko jäsenien listassa jäsenet sopivia
   if (kaikkiKunnossa) {
     kaikkiKunnossa = onkoJasenetSopivat(jasenet);
   }
 
+  // tarkistetaan
   if (kaikkiKunnossa) {
     kaikkiKunnossa = loytyykoId(data.sarjat, sarja);
   }
@@ -276,9 +279,9 @@ function lisaaJoukkue(data, nimi, leimaustavat, sarja, jasenet) {
       "id": id,
       "nimi": nimi,
       "jasenet": jasenet,
-      "leimaustapa": leimaustavat,
+      "leimaustapa": leimaustapojenIndeksit,
       "rastileimaukset": [],
-      "sarja": sarja,
+      "sarja": sarja,   // tämä pitäisi olla viite sarjaan eikä sarja merkkijonona
       "pisteet": 0,
       "matka": 0,
       "aika": "00:00:00"
@@ -365,25 +368,38 @@ function poistaTyhjat(taulukko) {
 /**
  * Tarkistaa että leimaustapa-taulukossa on vähintään yksi leimaustapa.
  * Leimaustavat löytyvät data.leimaustavat-taulukosta.
+ * Tallentaa löytyneiden leimaustapojen indeksit annettuun taulukkoon.
  * @param {Array} leimaustavat jossa täytyy alemman taulukon alkiot löytyä
- * @param {Array} taulukko jonka alkiot täytyy löytyä leimaustavoista
+ * @param {Array} annetutTaulukkona jonka alkiot täytyy löytyä leimaustavoista
+ * @param {Array} leimaustapojenIndeksit johon lisätään kaikki löydetyt indekseinä
  * @returns 
  */
-function onkoLeimaustavatSopivat(leimaustavat, taulukko) {
+function onkoLeimaustavatSopivat(leimaustavat, annetutTaulukkona, leimaustapojenIndeksit) {
   // tyhjä taulukko ei käy
-  if (taulukko.length === 0) {
+  if (annetutTaulukkona.length === 0) {
     return false;
   }
 
+  // varmistetaan että indeksilista on tyhjä
+  leimaustapojenIndeksit = [];
+
   // tarkistaa, onko kaikki taulukon leimaustavat datan leimaustavoissa
-  for (let tapa of taulukko) {
+  for (let tapa of annetutTaulukkona) {
     let loytyiko = false;
-    for (let leimaustapa of leimaustavat) {
+
+    for (let i = 0; i < leimaustavat.length; i++) {
+      if (tapa === leimaustavat[i]) {
+        loytyiko = true;
+        leimaustapojenIndeksit.push(i);
+        break;
+      }
+    }
+/*     for (let leimaustapa of leimaustavat) {
       if (tapa === leimaustapa) {
         loytyiko = true;
         break; // tarkista toimiiko näin!!!
       }
-    }
+    } */
     if (!loytyiko) {
       return false;
     }
