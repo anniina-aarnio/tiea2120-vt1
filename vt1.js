@@ -331,12 +331,9 @@ function onkoJasenetSopivat(jasenet) {
     return false;
   }
 
-  // onko sopivia nimiä eli uniikkeja ja ei-tyhjiä
+  // onko joukkueen jäsenet keskenään erinimiset
   for (let i = 0; i < (jasenet.length-1); i++) {
-    if (jasenet[i].trim().length == 0) {
-      return false;
-    }
-    for (let j = i; j < jasenet.length; j++) {
+    for (let j = i + 1; j < jasenet.length; j++) {
       if (jasenet[i] == jasenet[j]) { // nyt "Kissa" ja "kissa" on eri nimet
         return false;
       }
@@ -347,7 +344,7 @@ function onkoJasenetSopivat(jasenet) {
 }
 
 /**
- * Poistaa taulukosta tyhjät arvot
+ * Poistaa taulukosta tyhjät arvot alkuperäisestä taulukosta
  * @param {Array} taulukko jossa String:ejä
  */
 function poistaTyhjat(taulukko) {
