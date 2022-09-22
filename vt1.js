@@ -252,43 +252,53 @@ function alkaakoNumerolla(testattava) {
 function lisaaJoukkue(data, nimi, leimaustavat, sarja, jasenet) {
   let kaikkiKunnossa = true;
 
-  // luodaan uniikki id
-  let id = uusiId(data.joukkueet);
+  // luodaan uusi joukkue ja sille indeksi
+  let uusi = {
+    "id": uusiId(data.joukkueet)
+  };
 
   // tarkistetaan, että nimi on sopiva
+  // jos on niin lisätään se joukkueeseen
   kaikkiKunnossa = onkoNimiSopiva(data.joukkueet, nimi);
+  if (kaikkiKunnossa) {
+    uusi.nimi = nimi;
+  }
 
   // tarkistetaan, että leimaustavat ovat sopivat ja tallennetaan niiden indeksit taulukkoon
-  let leimaustapojenIndeksit = [];
   if (kaikkiKunnossa) {
-    kaikkiKunnossa = onkoLeimaustavatSopivat(data.leimaustavat, leimaustavat, leimaustapojenIndeksit);
+    let vastaus = onkoLeimaustavatSopivat(data.leimaustavat, leimaustavat);
+    kaikkiKunnossa = vastaus.onko;
+    if (kaikkiKunnossa) {
+      uusi.leimaustapa = vastaus.indeksit;
+    }
   }
 
   // tarkistetaan onko jäsenien listassa jäsenet sopivia
   if (kaikkiKunnossa) {
     kaikkiKunnossa = onkoJasenetSopivat(jasenet);
+    uusi.jasenet = jasenet;
   }
 
-  // tarkistetaan
+  // tarkistetaan että annettu sarjan id löytyy data.sarjasta ja luodaan viitesarjaan
   if (kaikkiKunnossa) {
-    kaikkiKunnossa = loytyykoId(data.sarjat, sarja);
+    let tarkistettu = loytyykoId(data.sarjat, sarja);
+    kaikkiKunnossa = tarkistettu.loytyikoId;
+    if (tarkistettu.loytyikoId) {
+      uusi.sarja = tarkistettu.viiteSarjaan;
+    }
   }
 
+  // jos kaikki on edelleen kunnossa, lisätään loput tiedot ja lisätään alkuperäiseen dataan
   if (kaikkiKunnossa) {
-    let uusi = {
-      "id": id,
-      "nimi": nimi,
-      "jasenet": jasenet,
-      "leimaustapa": leimaustapojenIndeksit,
-      "rastileimaukset": [],
-      "sarja": sarja,   // tämä pitäisi olla viite sarjaan eikä sarja merkkijonona
-      "pisteet": 0,
-      "matka": 0,
-      "aika": "00:00:00"
-    };
+    uusi.rastileimaukset = [];
+    uusi.pisteet = 0;
+    uusi.matka = 0;
+    uusi.aika = "00:00:00";
+
     data.joukkueet.push(uusi);
   }
 
+  // palautetaan data
   return data;
 }
 
@@ -372,16 +382,22 @@ function poistaTyhjat(taulukko) {
  * @param {Array} leimaustavat jossa täytyy alemman taulukon alkiot löytyä
  * @param {Array} annetutTaulukkona jonka alkiot täytyy löytyä leimaustavoista
  * @param {Array} leimaustapojenIndeksit johon lisätään kaikki löydetyt indekseinä
- * @returns 
+ * @returns {Object} vastaus.onko jossa true jos on sopivat ja vastaus.indeksit taulukko, jossa haettujen indeksit
  */
-function onkoLeimaustavatSopivat(leimaustavat, annetutTaulukkona, leimaustapojenIndeksit) {
+function onkoLeimaustavatSopivat(leimaustavat, annetutTaulukkona) {
+
+  // luodaan vastausobjekti
+  let vastaus = {
+    "onko": false,
+    "indeksit": []
+  };
+
   // tyhjä taulukko ei käy
   if (annetutTaulukkona.length === 0) {
-    return false;
+    return vastaus;
   }
 
-  // varmistetaan että indeksilista on tyhjä
-  leimaustapojenIndeksit = [];
+
 
   // tarkistaa, onko kaikki taulukon leimaustavat datan leimaustavoissa
   for (let tapa of annetutTaulukkona) {
@@ -390,22 +406,18 @@ function onkoLeimaustavatSopivat(leimaustavat, annetutTaulukkona, leimaustapojen
     for (let i = 0; i < leimaustavat.length; i++) {
       if (tapa === leimaustavat[i]) {
         loytyiko = true;
-        leimaustapojenIndeksit.push(i);
+        vastaus.indeksit.push(i);
         break;
       }
     }
-/*     for (let leimaustapa of leimaustavat) {
-      if (tapa === leimaustapa) {
-        loytyiko = true;
-        break; // tarkista toimiiko näin!!!
-      }
-    } */
+
     if (!loytyiko) {
-      return false;
+      return vastaus;
     }
   }
 
-  return true;
+  vastaus.onko = true;
+  return vastaus;
 }
 
 /**
@@ -416,12 +428,18 @@ function onkoLeimaustavatSopivat(leimaustavat, annetutTaulukkona, leimaustapojen
  * @return {Boolean} true, jos id löytyy taulukosta
  */
 function loytyykoId(taulukko, id) {
+  let tarkistettu = {
+    "loytyikoId": false
+  };
+
   for (let alkio of taulukko) {
     if (alkio.id == id) {
-      return true;
+      tarkistettu.loytyikoId = true;
+      tarkistettu.viiteSarjaan = alkio;
+      return tarkistettu;
     }
   }
-  return false;
+  return tarkistettu;
 }
 
 /**
