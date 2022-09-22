@@ -472,8 +472,34 @@ function uusiId(taulukko) {
   * @return {Object} joukkue
   */
 function laskeAika(joukkue) {
+  // etsitään joukkue.rastileimauksista LAHTO ja sen aika
+  let alku = etsiAika(joukkue.rastileimaukset, "LAHTO");
+
+  // etsitään joukkue.rastileimauksista MAALI ja sen aika
+  let loppu = etsiAika(joukkue.rastileimaukset, "MAALI");
+
+  // lasketaan erotus ja laitetaan paikalleen String-muodossa
+
+
   return joukkue;
 }
+
+/**
+ * Etsii koodinimen perusteella leimausajan ja palauttaa sen
+ * @param {Array} rastileimaukset, josta etsitään leimaus, jossa etsittävä koodi 
+ * @param {String} etsittava koodi jota etsitään
+ * @return {String} etsitty kellonaika "vvvv-kk-pp hh:mm:ss"-muodossa tai tyhjän merkkijonon
+ */
+function etsiAika(rastileimaukset, etsittava) {
+  for (let leimaus of rastileimaukset) {
+    if (leimaus.koodi === etsittava) {
+      return leimaus.aika;
+    }
+  }
+
+  return "";
+}
+
 
 /**
   * Taso 3 ja Taso 5
