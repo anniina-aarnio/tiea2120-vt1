@@ -30,13 +30,64 @@ td {
     padding: 0;
 }
 
+tbody > tr > :nth-child(4) ul {
+    padding: 0;
+    padding-right: 0.3em;
+}
+
+tbody > tr > :nth-child(4) ul li:after {
+    content: " ";
+}
+
+tbody > tr > :nth-child(4) ul li {
+    display: inline;
+}
+
 ul {
     margin: 0;
     padding: 0;
-    padding-left: 1em;
+    padding-left: 1.5em;
 }
 
 ul li {
     margin: 0;
     padding: 0;
 }
+
+.red {
+    color: red;
+}
+
+fieldset {
+    border-color: #ccc;
+    border-width: 1px;
+}
+
+div > form > fieldset > label {
+    font-weight: bold;
+    padding: 0.4em 0em;
+}
+
+div > form > fieldset > label input {
+    float: right;
+}
+
+fieldset > fieldset {
+    border: none;
+    padding: 0.6em;
+}
+
+fieldset > fieldset legend {
+    font-weight: bold;
+}
+
+/* Sarja */
+form > fieldset > fieldset:nth-of-type(1) {
+    float: right;
+}
+
+/* Leimaustavat */
+form > fieldset > fieldset:nth-of-type(2) {
+    margin-left: 2em;
+}
+

@@ -644,8 +644,8 @@ function jarjestaJoukkueet(data, mainsort="nimi", sortorder=[] ) {
 
 
   // järjestetään joukkueen jäsenet nimen perusteella järjestykseen
-  let leimaustavat = Array.from(data.leimaustavat);
   for (let joukkue of joukkueet) {
+    let leimaustavat = Array.from(data.leimaustavat);
     joukkue.jasenet = joukkue.jasenet.sort(vertaaMerkkijonoja);
     joukkue.leimaustapa = joukkue.leimaustapa.sort((a,b) =>
       vertaaMerkkijonoja(leimaustavat[a], leimaustavat[b]));
