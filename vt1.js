@@ -647,12 +647,18 @@ function jarjestaJoukkueet(data, mainsort="nimi", sortorder=[] ) {
   for (let joukkue of joukkueet) {
     let leimaustavat = Array.from(data.leimaustavat);
     joukkue.jasenet = joukkue.jasenet.sort(vertaaMerkkijonoja);
-    joukkue.leimaustapa = joukkue.leimaustapa.sort((a,b) =>
-      vertaaMerkkijonoja(leimaustavat[a], leimaustavat[b]));
+    joukkue.leimaustapa = jarjestaLeimaustavatJEE(joukkue.leimaustapa, leimaustavat);
+
   }
 
   console.log(joukkueet);
   return joukkueet;
+}
+
+function jarjestaLeimaustavatJEE(indeksilista, leimaustapanimilista) {
+  let jarjestetty = indeksilista.sort((a,b) =>
+    vertaaMerkkijonoja(leimaustapanimilista[a], leimaustapanimilista[b]));
+  return jarjestetty;
 }
 
 /**
