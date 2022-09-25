@@ -3,10 +3,17 @@ div#vt1 > div > div > div {
     margin: 0.5em;
     padding: 1em;
     border: 1px solid black;
+    width: 15%;
+}
+
+div#vt1 > div > div > :first-child {
+    width: 45%;
+    min-width: 35em;
 }
 
 div#vt1 > div > div > :nth-child(2) {
-    width: 17em;
+    width: 15%;
+    min-width: 18em;
 }
 
 div#vt1 > div > div > :nth-child(2) label {
@@ -16,6 +23,7 @@ div#vt1 > div > div > :nth-child(2) label {
 table {
     border-collapse: collapse;
     border: 1px dotted black;
+    width: 100%;
 }
 
 tr th {
