@@ -115,6 +115,19 @@ function muuntuukoNumeroksi(testattava) {
 }
 
 /**
+ * 
+ * @param {String} testattava toivottavasti muotoa "X.YZ" 
+ * @returns {Boolean} true jos on float, false jos ei
+ */
+function muuntuukoFloatiksi(testattava) {
+  let osat = testattava.split(".");
+  if (osat.length < 2 || osat === undefined) {
+    return false;
+  }
+  return (muuntuukoNumeroksi(osat[0]) && muuntuukoNumeroksi(osat[1]));
+}
+
+/**
   * Taso 1
   * Poistaa joukkueen id:n perusteella data-rakenteesta ja palauttaa muuttuneen datan
   * @param {Object} data - tietorakenne josta joukkue poistetaan
@@ -512,25 +525,9 @@ function aikojenErotus(alku, loppu) {
     return erotus;
   }
 
-  // muodostetaan jokaisesta osasta int-muotoiset vastineet, joilla lasketaan
-  // oletuksena toistaiseksi että jokainen on oikeassa muodossa...
-  let alun = [
-    parseInt(alku.substring(0,4)),   // vuosi
-    parseInt(alku.substring(5,7)),   // kk
-    parseInt(alku.substring(8,10)),  // pv
-    parseInt(alku.substring(11,13)), // tunnit
-    parseInt(alku.substring(14,16)), // minuutit
-    parseInt(alku.substring(17)),    // sekunnit
-  ];
-
-  let lopun = [
-    parseInt(loppu.substring(0,4)),   // vuosi
-    parseInt(loppu.substring(5,7)),   // kk
-    parseInt(loppu.substring(8,10)),  // pv
-    parseInt(loppu.substring(11,13)), // tunnit
-    parseInt(loppu.substring(14,16)), // minuutit
-    parseInt(loppu.substring(17)),    // sekunnit
-  ];
+  // muodostetaan jokaisesta osasta int-muotoiset vastineet taulukkoon
+  let alun = muunnaAikaTaulukoksi(alku);
+  let lopun = muunnaAikaTaulukoksi(loppu);
 
   // lasketaan kellonaikojen erotus
   let vahennetty = [];
@@ -543,6 +540,26 @@ function aikojenErotus(alku, loppu) {
 
   // palautetaan merkkijono, jossa kerrottu aika "hh:mm:ss"-muodossa
   return erotus;
+}
+
+/**
+ * Ottaa parametrina merkkijonon, jossa on aluksi vuosi, kuukausi, päivä, tunti, minuutti, sekunti
+ * Palauttaa taulukon jossa samat arvot integereinä:
+ * indeksissä 0 vuosi, 1 kuukausi, 2 päivä
+ * indeksissä 3 tunti, 4 minuutti, 5 sekunti
+ * @param {String} aikaMuodossaVKPHMS eli muodossa "vvvv-kk-pp hh:mm:ss"
+ * @returns {Array} jossa tietyssä indeksissä tietty osa ajasta
+ */
+function muunnaAikaTaulukoksi(aikaMuodossaVKPHMS) {
+  let uusiAika = [
+    parseInt(aikaMuodossaVKPHMS.substring(0,4)),   // vuosi
+    parseInt(aikaMuodossaVKPHMS.substring(5,7)),   // kk
+    parseInt(aikaMuodossaVKPHMS.substring(8,10)),  // pv
+    parseInt(aikaMuodossaVKPHMS.substring(11,13)), // tunnit
+    parseInt(aikaMuodossaVKPHMS.substring(14,16)), // minuutit
+    parseInt(aikaMuodossaVKPHMS.substring(17)),    // sekunnit
+  ];
+  return uusiAika;
 }
 
 /**
@@ -651,13 +668,21 @@ function jarjestaJoukkueet(data, mainsort="nimi", sortorder=[] ) {
 
   }
 
-  console.log(joukkueet);
+  //console.log(joukkueet);
   return joukkueet;
 }
 
-function jarjestaLeimaustavatJEE(indeksilista, leimaustapanimilista) {
+/**
+ * Järjestää leimaustavat siten, että käy indeksilistan läpi
+ * Indeksilistassa on joukkueen leimaustavat indeksinumerona, jota verrataan
+ * leimaustapanimilistaan
+ * @param {Array} indeksilista jossa joukkueen indeksit leimaustapalistan alkioille
+ * @param {Array} leimaustapaNimilista merkkijonolista leimaustavoista
+ * @returns järjestetty lista, jossa joukkueen leimaustavat ovat aakkosjärjestyksessä
+ */
+function jarjestaLeimaustavatJEE(indeksilista, leimaustapaNimilista) {
   let jarjestetty = indeksilista.sort((a,b) =>
-    vertaaMerkkijonoja(leimaustapanimilista[a], leimaustapanimilista[b]));
+    vertaaMerkkijonoja(leimaustapaNimilista[a], leimaustapaNimilista[b]));
   return jarjestetty;
 }
 
@@ -699,34 +724,21 @@ function vertaaMerkkijonoja(a, b) {
  * @returns -1 jos a on pienempi, 1 jos b on pienempi ja 0 jos samat
  */
 function vertaaAikaa(a, b) {
-  let an = {
-    tunnit: parseInt(a.substring(0,2)),
-    minuutit: parseInt(a.substring(3,5)),
-    sekunnit: parseInt(a.substring(6))
-  };
-  let bn = {
-    tunnit: parseInt(b.substring(0,2)),
-    minuutit: parseInt(b.substring(3,5)),
-    sekunnit: parseInt(b.substring(6))
-  };
-  if (an.tunnit < bn.tunnit) {
-    return -1;
+  let an = muunnaAikaTaulukoksi(a);
+  let bn = muunnaAikaTaulukoksi(b);
+
+  if (an === undefined) {
+    return 1; // mieti onko järkevä
   }
-  else if (bn.tunnit < an.tunnit) {
-    return 1;
+  for (let i = 0; i < an.length; i++) {
+    if (an[i] < bn[i]) {
+      return -1;
+    }
+    else if (bn[i] < an[i]) {
+      return 1;
+    }
   }
-  if (an.minuutit < bn.minuutit) {
-    return -1;
-  }
-  else if (bn.minuutit < an.minuutit) {
-    return 1;
-  }
-  if (an.sekunnit < bn.sekunnit) {
-    return -1;
-  }
-  else if (bn.sekunnit < an.sekunnit) {
-    return 1;
-  }
+  
   return 0;
 }
 
@@ -744,8 +756,58 @@ function vertaaAikaa(a, b) {
   * @return {Object} joukkue
   */
 function laskeMatka(joukkue) {
+  let leimat = Array.from(joukkue.rastileimaukset);
+  leimat = leimat.sort((a,b) => vertaaAikaa(a.aika, b.aika));
+  let matka = 0.0;
+  console.log(leimat);
+
+  // Palauttaa suoraan takaisin jos leimoja ei ole
+  if (leimat.length === 0) {
+    return joukkue;
+  }
+
+  let osaMatkaa = false;
+  let osat = {
+    "lat1": 0.0,
+    "lon1": 0.0,
+    "lat2": 0.0,
+    "lon2": 0.0
+  };
+  for (let leima of leimat) {
+    // jos leima.rastia ei ole
+    if (leima.rasti === undefined) {
+      continue; // jatkaa seuraavaan leimaan (?)
+    }
+    // jos lähtö on jo löytynyt mutta maalissa ei vielä olla
+    if (osaMatkaa) {
+      if (muuntuukoFloatiksi(leima.rasti.lat) && muuntuukoFloatiksi(leima.rasti.lon)) {
+        osat.lat1 = osat.lat2;
+        osat.lon1 = osat.lon2;
+        osat.lat2 = parseFloat(leima.rasti.lat);
+        osat.lon2 = parseFloat(leima.rasti.lon);
+        matka += getDistanceFromLatLonInKm(osat.lat1, osat.lon1, osat.lat2, osat.lon2);
+        console.log(matka);
+      }
+      else {
+        continue;
+      }
+    }
+    // jos rasti on lähtö
+    if (leima.rasti.koodi === "LAHTO") {
+      osaMatkaa = true;
+      osat.lat2 = parseFloat(leima.rasti.lat);
+      osat.lon2 = parseFloat(leima.rasti.lon);
+    }
+    // kun päästääm maaliin, voidaan lisätä löydetty matka joukkueeseen ja palauttaa joukkue
+    if (leima.rasti.koodi === "MAALI") {
+      break;
+    }
+  }
+
+  joukkue.matka = matka;
   return joukkue;
 }
+
 
 /**
   * Taso 5

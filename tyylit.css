@@ -44,11 +44,20 @@ tbody > tr > :nth-child(4) ul {
 }
 
 tbody > tr > :nth-child(4) ul li:after {
-    content: " ";
+    content: ",";
+}
+
+tbody > tr > :nth-child(4) ul li:last-child::after {
+    content: "";
 }
 
 tbody > tr > :nth-child(4) ul li {
     display: inline;
+}
+
+/* matka: vaihda tähän pyöristetyt kilometrit...*/
+tbody > tr > :nth-child(6) {
+    color: green;
 }
 
 ul {
