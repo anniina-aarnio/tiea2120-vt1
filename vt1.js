@@ -837,26 +837,31 @@ function laskePisteet(joukkue) {
     return joukkue;
   } 
 
+  let hyvaksytytRastit = new Map();
   let osaMatkaa = false;
 
   for (let leima of leimat) {
     if (leima.rasti === undefined) {
       continue;
     }
-    if (leima.rasti.koodi === "LAHTO") {
-      osaMatkaa = true;
-    }
     if (leima.rasti.koodi === "MAALI") {
       break;
     }
     if (osaMatkaa && muuntuukoNumeroksi(leima.rasti.koodi.substring(0,1))) {
-      pisteet += parseInt(leima.rasti.koodi.substring(0,1));
+      hyvaksytytRastit.set(leima.rasti.koodi, parseInt(leima.rasti.koodi.substring(0,1)));
     }
+    if (leima.rasti.koodi === "LAHTO") {
+      osaMatkaa = true;
+    }
+  }
+
+  for (let value of hyvaksytytRastit.values()) {
+    pisteet += value;
   }
 
   joukkue.pisteet = pisteet;
   return joukkue;
-}
+} // Sopupelille tulee nyt 0 kun pitäisi tulla 59
 
 
 
