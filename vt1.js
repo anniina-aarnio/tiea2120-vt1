@@ -759,7 +759,6 @@ function laskeMatka(joukkue) {
   let leimat = Array.from(joukkue.rastileimaukset);
   leimat = leimat.sort((a,b) => vertaaAikaa(a.aika, b.aika));
   let matka = 0.0;
-  console.log(leimat);
 
   // Palauttaa suoraan takaisin jos leimoja ei ole
   if (leimat.length === 0) {
@@ -786,7 +785,6 @@ function laskeMatka(joukkue) {
         osat.lat2 = parseFloat(leima.rasti.lat);
         osat.lon2 = parseFloat(leima.rasti.lon);
         matka += getDistanceFromLatLonInKm(osat.lat1, osat.lon1, osat.lat2, osat.lon2);
-        console.log(matka);
       }
       else {
         continue;
@@ -829,6 +827,34 @@ function laskeMatka(joukkue) {
   * @return {Object} joukkue
   */
 function laskePisteet(joukkue) {
+  let pisteet = 0;
+  let leimat = Array.from(joukkue.rastileimaukset);
+  leimat = leimat.sort((a,b) => vertaaAikaa(a.aika, b.aika));
+
+  console.log(leimat);
+
+  if (leimat.length === 0) {
+    return joukkue;
+  } 
+
+  let osaMatkaa = false;
+
+  for (let leima of leimat) {
+    if (leima.rasti === undefined) {
+      continue;
+    }
+    if (leima.rasti.koodi === "LAHTO") {
+      osaMatkaa = true;
+    }
+    if (leima.rasti.koodi === "MAALI") {
+      break;
+    }
+    if (osaMatkaa && muuntuukoNumeroksi(leima.rasti.koodi.substring(0,1))) {
+      pisteet += parseInt(leima.rasti.koodi.substring(0,1));
+    }
+  }
+
+  joukkue.pisteet = pisteet;
   return joukkue;
 }
 
