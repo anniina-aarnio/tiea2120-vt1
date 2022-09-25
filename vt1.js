@@ -625,7 +625,7 @@ function teeAjaksi(vahennetty) {
   * @param {String} mainsort - ensimmäinen (ainoa) järjestysehto, joka voi olla nimi, sarja, matka, aika tai pisteet  TASO 3
   * @param {Array} sortorder - mahdollinen useampi järjestysehto TASO 5
   * @return {Array} palauttaa järjestetyn ja täydennetyn _kopion_ data.joukkueet-taulukosta
-  */
+  */ // NYT TASO 3, MUUTA TASO 5
 function jarjestaJoukkueet(data, mainsort="nimi", sortorder=[] ) {
 /*   let joukkueet = Array.from(data.joukkueet); */
   let joukkueet = Array.from(data.joukkueet, function(obj) {   // deep copy, jottei muuta järjestyksiä alkuperäisessä...
@@ -641,6 +641,9 @@ function jarjestaJoukkueet(data, mainsort="nimi", sortorder=[] ) {
       "sarja": obj.sarja
     };
   });
+  
+  // TODO: Tähän muutokset TASO 5 mukaan
+  // luultavasti kannattaa muuttaa, että jokainen sort on omana funktionaan jota kutsutaan...
 
   if (mainsort === "nimi") {
     joukkueet = joukkueet.sort(vertaaNimea);
@@ -864,7 +867,7 @@ function laskePisteet(joukkue) {
 
   joukkue.pisteet = pisteet;
   return joukkue;
-} // Sopupelille tulee nyt 0 kun pitäisi tulla 59
+}
 
 
 
