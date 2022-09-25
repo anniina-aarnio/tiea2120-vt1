@@ -647,7 +647,7 @@ function jarjestaJoukkueet(data, mainsort="nimi", sortorder=[] ) {
   }
   else if (mainsort === "sarja") {
     joukkueet = joukkueet.sort((a, b) => {
-      vertaaNimea(a.sarja,b.sarja);
+      vertaaMerkkijonoja(a.sarja.nimi,b.sarja.nimi);
     });
   }
   else if (mainsort === "matka") {
@@ -707,7 +707,6 @@ function vertaaMerkkijonoja(a, b) {
  * @returns -1 jos a on pienempi, 1 jos b on pienempi ja 0 jos samat
  */
 function vertaaAikaa(a, b) {
-  console.log(a, b);
   let an = {
     tunnit: parseInt(a.substring(0,2)),
     minuutit: parseInt(a.substring(3,5)),
