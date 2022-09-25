@@ -595,11 +595,15 @@ function teeAjaksi(vahennetty) {
   * Taso 3 ja Taso 5
   *  Järjestää joukkueet järjestykseen haluttujen tietojen perusteella
   *  järjestetään ensisijaisesti kasvavaan aakkosjärjestykseen 
-  *  Järjestäminen on tehtävä alkuperäisen taulukon kopiolle. Alkuperäistä ei saa muuttaa tai korvata.
-  *  mainsort-parametrin mukaisen tiedon perusteella. mainsort voi olla nimi, sarja, matka, aika tai pisteet
-  *  Joukkueen jäsenet järjestetään aina aakkosjärjestykseen. Alkuperäisen joukkueobjektin jäsenten järjestys ei saa muuttaa.
+  *  Järjestäminen on tehtävä alkuperäisen taulukon kopiolle.
+  *  Alkuperäistä ei saa muuttaa tai korvata.
+  *  mainsort-parametrin mukaisen tiedon perusteella.
+  *  mainsort voi olla nimi, sarja, matka, aika tai pisteet
+  *  Joukkueen jäsenet järjestetään aina aakkosjärjestykseen.
+  *  Alkuperäisen joukkueobjektin jäsenten järjestys ei saa muuttaa.
   *  Joukkueen leimaustavat järjestetään myös aina aakkosjärjestykseen leimaustapojen nimien mukaan
-  *  Isoilla ja pienillä kirjaimilla ei ole missään järjestämisissä merkitystä eikä myöskään alussa tai lopussa olevalla whitespacella
+  *  Isoilla ja pienillä kirjaimilla ei ole missään järjestämisissä
+  *  merkitystä eikä myöskään alussa tai lopussa olevalla whitespacella
   *  sortorder-parametrin käsittely vain tasolla 5
   *  jos sortorder-parametrina on muuta kuin tyhjä taulukko, käytetään 
   *  sortorderin ilmoittamaa järjestystä eikä huomioida mainsort-parametria: 
@@ -623,9 +627,118 @@ function teeAjaksi(vahennetty) {
   * @return {Array} palauttaa järjestetyn ja täydennetyn _kopion_ data.joukkueet-taulukosta
   */
 function jarjestaJoukkueet(data, mainsort="nimi", sortorder=[] ) {
-  
-  return data.joukkueet;
+  let joukkueet = Array.from(data.joukkueet);
+/*   let joukkueet = Array.from(data.joukkueet, function(obj) {   // deep copy, jottei muuta järjestyksiä alkuperäisessä...
+    return {
+      "aika": obj.aika,
+      "id": obj.id,
+      "jasenet": obj.jasenet,
+      "leimaustapa": obj.leimaustapa,
+      "matka": obj.matka,
+      "nimi": obj.nimi,
+      "pisteet": obj.pisteet,
+      "rastileimaukset": obj.rastileimaukset,
+      "sarja": obj.sarja
+    };
+  }); */
+
+  if (mainsort === "nimi") {
+    joukkueet = joukkueet.sort(vertaaNimea);
+  }
+  else if (mainsort === "sarja") {
+    joukkueet = joukkueet.sort((a, b) => {
+      vertaaNimea(a.sarja,b.sarja);
+    });
+  }
+  else if (mainsort === "matka") {
+    joukkueet = joukkueet.sort((a,b) => a.matka - b.matka);
+  }
+  else if (mainsort === "aika") {
+    joukkueet = joukkueet.sort((a,b) => vertaaAikaa(a.aika, b.aika));
+  }
+  else if (mainsort === "pisteet") {
+    joukkueet = joukkueet.sort((a,b) => a.pisteet - b.pisteet);
+  }
+
+
+  // järjestetään joukkueen jäsenet nimen perusteella järjestykseen
+  for (let joukkue of joukkueet) {
+    joukkue.jasenet = joukkue.jasenet.sort(vertaaMerkkijonoja);
+  }
+
+  return joukkueet;
 }
+
+/**
+ * Vertaa kahden objektin objekti.nimi tietoja keskenään siten ettei aakkosten koolla ole väliä
+ * @param {Object} a 
+ * @param {Object} b 
+ * @returns -1 jos a tulee ensin, 1 jos b tulee ensin ja 0 jos samat
+ */
+function vertaaNimea(a, b) {
+  return vertaaMerkkijonoja(a.nimi, b.nimi);
+}
+
+/**
+ * Vertaa kahden objektin merkkijonon tietoja keskenään siten ettei aakkosten koolla ole väliä
+ * @param {String} a 
+ * @param {String} b 
+ * @returns -1 jos a tulee ensin, 1 jos b tulee ensin ja 0 jos samat
+ */
+function vertaaMerkkijonoja(a, b) {
+  let verrattavaA = a.toUpperCase().trim();
+  let verrattavaB = b.toUpperCase().trim();
+  if (verrattavaA < verrattavaB) {
+    return -1;
+  }
+  if (verrattavaB < verrattavaA) {
+    return 1;
+  }
+  return 0;
+}
+
+/**
+ * Käy läpi a:n ja b:n:
+ * ensin vertaa tunnit, jos ne samat niin
+ * vertaa minuutit, jos nekin samat niin 
+ * vertaa sekunnit
+ * @param {String} a 
+ * @param {String} b 
+ * @returns -1 jos a on pienempi, 1 jos b on pienempi ja 0 jos samat
+ */
+function vertaaAikaa(a, b) {
+  console.log(a, b);
+  let an = {
+    tunnit: parseInt(a.substring(0,2)),
+    minuutit: parseInt(a.substring(3,5)),
+    sekunnit: parseInt(a.substring(6))
+  };
+  let bn = {
+    tunnit: parseInt(b.substring(0,2)),
+    minuutit: parseInt(b.substring(3,5)),
+    sekunnit: parseInt(b.substring(6))
+  };
+  if (an.tunnit < bn.tunnit) {
+    return -1;
+  }
+  else if (bn.tunnit < an.tunnit) {
+    return 1;
+  }
+  if (an.minuutit < bn.minuutit) {
+    return -1;
+  }
+  else if (bn.minuutit < an.minuutit) {
+    return 1;
+  }
+  if (an.sekunnit < bn.sekunnit) {
+    return -1;
+  }
+  else if (bn.sekunnit < an.sekunnit) {
+    return 1;
+  }
+  return 0;
+}
+
 
 /**
   * Taso 5
