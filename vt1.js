@@ -472,17 +472,14 @@ function uusiId(taulukko) {
   * @return {Object} joukkue
   */
 function laskeAika(joukkue) {
-  console.log(joukkue);
   if (joukkue.rastileimaukset.length == 0) {
     return joukkue;
   }
   // etsitään joukkue.rastileimauksista LAHTO ja sen aika
   let alku = etsiAika(joukkue.rastileimaukset, "LAHTO");
-  //console.log(alku);
 
   // etsitään joukkue.rastileimauksista MAALI ja sen aika
   let loppu = etsiAika(joukkue.rastileimaukset, "MAALI");
-  //console.log(loppu);
 
   // lasketaan erotus ja laitetaan paikalleen String-muodossa
   joukkue.aika = aikojenErotus(alku, loppu);
@@ -585,7 +582,7 @@ function teeAjaksi(vahennetty) {
       }
     }
   }
-  console.log("muutettu:" + vahennetty);
+
   let osat = {
     tunnit: String(vahennetty[3]).padStart(2,"0"),
     minuutit: String(vahennetty[4]).padStart(2,"0"),
@@ -626,6 +623,7 @@ function teeAjaksi(vahennetty) {
   * @return {Array} palauttaa järjestetyn ja täydennetyn _kopion_ data.joukkueet-taulukosta
   */
 function jarjestaJoukkueet(data, mainsort="nimi", sortorder=[] ) {
+  
   return data.joukkueet;
 }
 
