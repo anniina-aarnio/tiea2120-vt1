@@ -627,45 +627,49 @@ function teeAjaksi(vahennetty) {
   * @return {Array} palauttaa järjestetyn ja täydennetyn _kopion_ data.joukkueet-taulukosta
   */
 function jarjestaJoukkueet(data, mainsort="nimi", sortorder=[] ) {
-  let joukkueet = Array.from(data.joukkueet);
-/*   let joukkueet = Array.from(data.joukkueet, function(obj) {   // deep copy, jottei muuta järjestyksiä alkuperäisessä...
+/*   let joukkueet = Array.from(data.joukkueet); */
+  let joukkueet = Array.from(data.joukkueet, function(obj) {   // deep copy, jottei muuta järjestyksiä alkuperäisessä...
     return {
       "aika": obj.aika,
       "id": obj.id,
-      "jasenet": obj.jasenet,
-      "leimaustapa": obj.leimaustapa,
+      "jasenet": Array.from(obj.jasenet),
+      "leimaustapa": Array.from(obj.leimaustapa),
       "matka": obj.matka,
       "nimi": obj.nimi,
       "pisteet": obj.pisteet,
       "rastileimaukset": obj.rastileimaukset,
       "sarja": obj.sarja
     };
-  }); */
+  });
 
   if (mainsort === "nimi") {
     joukkueet = joukkueet.sort(vertaaNimea);
   }
-  else if (mainsort === "sarja") {
+  if (mainsort === "sarja") {
     joukkueet = joukkueet.sort((a, b) => {
       vertaaMerkkijonoja(a.sarja.nimi,b.sarja.nimi);
     });
   }
-  else if (mainsort === "matka") {
+  if (mainsort === "matka") {
     joukkueet = joukkueet.sort((a,b) => a.matka - b.matka);
   }
-  else if (mainsort === "aika") {
+  if (mainsort === "aika") {
     joukkueet = joukkueet.sort((a,b) => vertaaAikaa(a.aika, b.aika));
   }
-  else if (mainsort === "pisteet") {
+  if (mainsort === "pisteet") {
     joukkueet = joukkueet.sort((a,b) => a.pisteet - b.pisteet);
   }
 
 
   // järjestetään joukkueen jäsenet nimen perusteella järjestykseen
+  let leimaustavat = Array.from(data.leimaustavat);
   for (let joukkue of joukkueet) {
     joukkue.jasenet = joukkue.jasenet.sort(vertaaMerkkijonoja);
+    joukkue.leimaustapa = joukkue.leimaustapa.sort((a,b) =>
+      vertaaMerkkijonoja(leimaustavat[a], leimaustavat[b]));
   }
 
+  console.log(joukkueet);
   return joukkueet;
 }
 
@@ -737,7 +741,6 @@ function vertaaAikaa(a, b) {
   }
   return 0;
 }
-
 
 /**
   * Taso 5
