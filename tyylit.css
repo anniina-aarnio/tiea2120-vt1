@@ -26,7 +26,18 @@ table {
     width: 100%;
 }
 
+tr {
+    position: relative;
+}
+
+tr:hover .red {
+    color: red;
+    position: absolute;
+    left: 0;
+}
+
 tr th {
+    text-align: left;
     border: 1px dotted black;
     vertical-align: top;
     padding: 0;
@@ -72,7 +83,7 @@ ul li {
 }
 
 .red {
-    color: red;
+    color: white;
 }
 
 fieldset {
