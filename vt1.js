@@ -646,9 +646,8 @@ function jarjestaJoukkueet(data, mainsort="nimi", sortorder=[] ) {
     joukkueet = joukkueet.sort(vertaaNimea);
   }
   if (mainsort === "sarja") {
-    joukkueet = joukkueet.sort((a, b) => {
-      vertaaMerkkijonoja(a.sarja.nimi,b.sarja.nimi);
-    });
+    joukkueet = joukkueet.sort((a, b) => 
+      vertaaMerkkijonoja(a.sarja.nimi,b.sarja.nimi));
   }
   if (mainsort === "matka") {
     joukkueet = joukkueet.sort((a,b) => a.matka - b.matka);
