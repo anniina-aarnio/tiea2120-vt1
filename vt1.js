@@ -472,15 +472,24 @@ function uusiId(taulukko) {
   * @return {Object} joukkue
   */
 function laskeAika(joukkue) {
+  console.log(joukkue);
+  if (joukkue.rastileimaukset.length == 0) {
+    return joukkue;
+  }
   // etsitään joukkue.rastileimauksista LAHTO ja sen aika
   let alku = etsiAika(joukkue.rastileimaukset, "LAHTO");
+  //console.log(alku);
 
   // etsitään joukkue.rastileimauksista MAALI ja sen aika
   let loppu = etsiAika(joukkue.rastileimaukset, "MAALI");
+  //console.log(loppu);
 
   // lasketaan erotus ja laitetaan paikalleen String-muodossa
+  joukkue.aika = aikojenErotus(alku, loppu);
 
-
+  if (joukkue.aika == "00:00:00") {
+    joukkue.aika = "";
+  }
   return joukkue;
 }
 
@@ -491,8 +500,9 @@ function laskeAika(joukkue) {
  * @return {String} etsitty kellonaika "vvvv-kk-pp hh:mm:ss"-muodossa tai tyhjän merkkijonon
  */
 function etsiAika(rastileimaukset, etsittava) {
+
   for (let leimaus of rastileimaukset) {
-    if (leimaus.koodi === etsittava) {
+    if (leimaus.rasti !== undefined && (leimaus.rasti).koodi === etsittava) {
       return leimaus.aika;
     }
   }
@@ -500,6 +510,89 @@ function etsiAika(rastileimaukset, etsittava) {
   return "";
 }
 
+/**
+ * Laskee "vvvv-kk-pp hh:mm:ss"-merkkijonomuodossa olevan alku- ja loppuajan erotuksen
+ * @param {String} alku 
+ * @param {String} loppu 
+ * @returns {String} palauttaa merkkijonon, jossa kerrottu aika "hh:mm:ss"-muodossa tai "00:00:00" jos virhe
+ */
+function aikojenErotus(alku, loppu) {
+  let erotus = "";
+  // tarkistetaan että alku ja loppu sopivaa muotoa tai ainakin sopivan kokoinen...
+  if (alku.length != 19 || loppu.length != 19) {
+    return erotus;
+  }
+
+  // tarkistetaan että alku on ennen loppua
+  if (alku >= loppu) {       // tarkista että toimii oikein!
+    return erotus;
+  }
+
+  if (alku === loppu) {
+    return erotus;
+  }
+
+  // muodostetaan jokaisesta osasta int-muotoiset vastineet, joilla lasketaan
+  // oletuksena toistaiseksi että jokainen on oikeassa muodossa...
+  let alun = [
+    parseInt(alku.substring(0,4)),   // vuosi
+    parseInt(alku.substring(5,7)),   // kk
+    parseInt(alku.substring(8,10)),  // pv
+    parseInt(alku.substring(11,13)), // tunnit
+    parseInt(alku.substring(14,16)), // minuutit
+    parseInt(alku.substring(17)),    // sekunnit
+  ];
+
+  let lopun = [
+    parseInt(loppu.substring(0,4)),   // vuosi
+    parseInt(loppu.substring(5,7)),   // kk
+    parseInt(loppu.substring(8,10)),  // pv
+    parseInt(loppu.substring(11,13)), // tunnit
+    parseInt(loppu.substring(14,16)), // minuutit
+    parseInt(loppu.substring(17)),    // sekunnit
+  ];
+
+  // lasketaan kellonaikojen erotus
+  let vahennetty = [];
+
+  for (let i = 0; i < alun.length; i++) {
+    vahennetty[i] = lopun[i] - alun[i];
+  }
+
+  erotus = teeAjaksi(vahennetty);
+
+  // palautetaan merkkijono, jossa kerrottu aika "hh:mm:ss"-muodossa
+  return erotus;
+}
+
+/**
+ * Käy läpi vähennetyn osat:
+ * indeksissä 0 = vuosi, 1 = kk, 2 = pv
+ * indeksissä 3 = tunnit, 4 = minuutit, 5 = sekunnit
+ * Palauttaa näistä muodostetun ajan
+ * @param {Array} vahennetty lista int-muodossa
+ * @return {String} "hh:mm:ss" -muodossa aika
+ */
+function teeAjaksi(vahennetty) {
+  for (let i = vahennetty.length - 1; i > 0; i--) {
+    if (vahennetty[i] < 0) {
+      vahennetty[i-1] = vahennetty[i-1]-1;
+      if (i == 5 || i == 4) {
+        vahennetty[i] = 60 + vahennetty[i];
+      }
+      else if (i == 3) {
+        vahennetty[i] = 24 - vahennetty[i];
+      }
+    }
+  }
+  console.log("muutettu:" + vahennetty);
+  let osat = {
+    tunnit: String(vahennetty[3]).padStart(2,"0"),
+    minuutit: String(vahennetty[4]).padStart(2,"0"),
+    sekunnit: String(vahennetty[5]).padStart(2,"0")
+  };
+  return osat.tunnit + ":" + osat.minuutit + ":" + osat.sekunnit;
+}
 
 /**
   * Taso 3 ja Taso 5
