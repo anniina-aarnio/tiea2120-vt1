@@ -6,11 +6,13 @@ div#vt1 > div > div > div {
     width: 15%;
 }
 
+/* div jossa taulukko */
 div#vt1 > div > div > :first-child {
     width: 45%;
-    min-width: 35em;
+    min-width:min-content;
 }
 
+/* div jossa lisää sarja yms */
 div#vt1 > div > div > :nth-child(2) {
     width: 15%;
     min-width: 18em;
@@ -20,6 +22,7 @@ div#vt1 > div > div > :nth-child(2) label {
     display: block;
 } 
 
+/* taulukon ominaisuuksia */
 table {
     border-collapse: collapse;
     border: 1px dotted black;
@@ -30,16 +33,54 @@ tr {
     position: relative;
 }
 
+
+tr th {
+    text-align: left;
+    border: 1px dotted black;
+    vertical-align: top;
+    padding: 0;
+}
+
+tbody > tr th {
+    white-space: nowrap;
+}
+
+td {
+    border: 1px dotted black;
+    vertical-align: top;
+    padding: 0;
+}
+
+tbody > tr > :nth-child(4) ul {
+    padding: 0;
+    padding-right: 0.3em;
+}
+
+tbody > tr > :nth-child(4) ul li:after {
+    content: ",";
+}
+
+tbody > tr > :nth-child(4) ul li:last-child::after {
+    content: "";
+}
+
+tbody > tr > :nth-child(4) ul li {
+    display: inline;
+}
+
+/* punainen poista "nappi" */
 .red {
     display: none;
 }
 
+/* punainen poista "nappi näkyvyys kun hiirtä käyttää rivin päällä */
 tr:hover .red {
     display: block;
     color: red;
     position: absolute;
     left: 0;
 }
+
 
 tr th {
     text-align: left;
