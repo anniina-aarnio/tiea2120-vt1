@@ -3,7 +3,6 @@ div#vt1 > div > div > div {
     margin: 0.5em;
     padding: 1em;
     border: 1px solid black;
-    width: 15%;
 }
 
 /* div jossa taulukko */
@@ -32,7 +31,6 @@ table {
 tr {
     position: relative;
 }
-
 
 tr th {
     text-align: left;
@@ -116,11 +114,6 @@ tbody > tr > :nth-child(4) ul li {
     display: inline;
 }
 
-/* matka: vaihda tähän pyöristetyt kilometrit...*/
-tbody > tr > :nth-child(6) {
-    color: green;
-}
-
 ul {
     margin: 0;
     padding: 0;
@@ -133,14 +126,9 @@ ul li {
 }
 
 /* Rastit taulukkomaisemman näköiseksi*/
-div#vt1 > div > div > :nth-child(3) ul {
-    display: grid;
-    grid-template-columns: 1fr;
-    column-gap: 0.3em;
-}
-
-ul li ~ strong ~ span {
-    color: green;
+div#vt1 > div > div > :nth-child(3) ul strong {
+    width: 5em;
+    display: inline-block;
 }
 
 fieldset {
