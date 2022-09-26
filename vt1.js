@@ -137,7 +137,6 @@ function muuntuukoFloatiksi(testattava) {
 function poistaJoukkue(data, id) {
   for (let i = 0; i < data.joukkueet.length; i++) {
     if (data.joukkueet[i].id === id) {
-      console.log("föffölömöö");
       data.joukkueet.splice(i, 1);
       return data;
     }
@@ -671,7 +670,6 @@ function jarjestaJoukkueet(data, mainsort="nimi", sortorder=[] ) {
 
   }
 
-  //console.log(joukkueet);
   return joukkueet;
 }
 
@@ -833,8 +831,6 @@ function laskePisteet(joukkue) {
   let pisteet = 0;
   let leimat = Array.from(joukkue.rastileimaukset);
   leimat = leimat.sort((a,b) => vertaaAikaa(a.aika, b.aika));
-
-  console.log(leimat);
 
   if (leimat.length === 0) {
     return joukkue;
