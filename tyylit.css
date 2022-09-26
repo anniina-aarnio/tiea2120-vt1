@@ -28,6 +28,10 @@ table {
     width: 100%;
 }
 
+thead th, thead tr {
+    min-width: max-content;
+}
+
 tr {
     position: relative;
 }
@@ -122,7 +126,6 @@ ul {
 
 ul li {
     margin: 0;
-    padding: 0;
 }
 
 /* Rastit taulukkomaisemman näköiseksi*/
@@ -189,3 +192,14 @@ fieldset > fieldset:nth-of-type(2) label input {
     float: right;
 }
 
+/* Järjestys-nuolet oikeaan reunaan */
+span[id^="up"], 
+span[id^="down"],
+span[aria-label^="Järjestä nousevasti"],
+span[aria-label^="Järjestä laskevasti"] {
+    float: right;
+}
+
+h3 + ul li {
+    padding: 0.1em 0;
+}
