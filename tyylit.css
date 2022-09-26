@@ -30,7 +30,12 @@ tr {
     position: relative;
 }
 
+.red {
+    display: none;
+}
+
 tr:hover .red {
+    display: block;
     color: red;
     position: absolute;
     left: 0;
@@ -41,6 +46,10 @@ tr th {
     border: 1px dotted black;
     vertical-align: top;
     padding: 0;
+}
+
+tbody > tr th {
+    white-space: nowrap;
 }
 
 td {
@@ -80,10 +89,6 @@ ul {
 ul li {
     margin: 0;
     padding: 0;
-}
-
-.red {
-    color: white;
 }
 
 fieldset {
