@@ -633,7 +633,7 @@ function jarjestaJoukkueet(data, mainsort="nimi", sortorder=[] ) {
       "id": obj.id,
       "jasenet": Array.from(obj.jasenet),
       "leimaustapa": Array.from(obj.leimaustapa),
-      "matka": obj.matka,
+      "matka": Math.round(obj.matka),
       "nimi": obj.nimi,
       "pisteet": obj.pisteet,
       "rastileimaukset": obj.rastileimaukset,
